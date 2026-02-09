@@ -12,7 +12,7 @@
       --border: rgba(255,255,255,0.08);
       --text: #ffffff;
       --muted: rgba(255,255,255,0.55);
-      --accent: #6aa9ff; /* 冷调现代蓝 */
+      --accent: #6aa9ff; /* 现代蓝 */
       --radius: 20px;
     }
 
@@ -55,7 +55,7 @@
     /* ===== Header ===== */
     header {
       text-align: center;
-      padding: clamp(24px, 6vw, 48px) 20px 20px;
+      padding: clamp(22px, 6vw, 48px) 16px 16px;
     }
 
     .title {
@@ -74,7 +74,9 @@
 
     /* ===== Player Card ===== */
     .card {
-      width: min(1120px, 100%);
+      width: 100%;
+      max-width: 1120px;          /* 大屏限制宽度 */
+      margin: 0 auto;
       background: linear-gradient(
         180deg,
         rgba(255,255,255,0.06),
@@ -83,15 +85,14 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.6);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
     }
 
     .player {
       width: 100%;
-      aspect-ratio: 16 / 9;
+      aspect-ratio: 16 / 9;  /* 默认：电脑/平板横向很好 */
       background: #000;
     }
 
@@ -102,49 +103,11 @@
       display: block;
     }
 
-    @media (max-aspect-ratio: 3/4) {
-      .player {
-        aspect-ratio: 9 / 16;
-      }
-    }
+    /* ===== Mobile: 真正满宽 + 高度跟随宽度(16:9) ===== */
+    @media (max-width: 768px) {
+      .page { padding: 0 0 8px; }
+      header { padding-left: 14px; padding-right: 14px; }
 
-    /* ===== Footer ===== */
-    footer {
-      margin: 22px 0 16px;
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 1px;
-      text-align: center;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="page">
-
-    <!-- Header -->
-    <header>
-      <h1 class="title">四海颂扬｜音乐事工</h1>
-      <div class="subtitle">FOUR SEAS PRAISE</div>
-    </header>
-
-    <!-- Player -->
-    <div class="card">
-      <div class="player">
-        <iframe
-          src="https://www.youtube.com/embed/videoseries?list=PL_DvPl8vaxH7kAHtuZMZpOCUyACY-8hls&modestbranding=1&rel=0"
-          title="四海颂扬 音乐播放列表"
-          allow="autoplay; encrypted-media; picture-in-picture"
-          allowfullscreen>
-        </iframe>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-      FOUR SEAS PRAISE · MUSIC MINISTRY
-    </footer>
-
-  </div>
-</body>
-</html>
+      .card {
+        max-width: none;      /* 关键：手机不要被 max-width 限制 */
+        border-radius: 14px; 
