@@ -6,108 +6,112 @@
   <title>四海颂扬｜音乐事工</title>
 
   <style>
-    :root {
-      --bg: #0a0c10;
-      --card: rgba(255,255,255,0.05);
-      --border: rgba(255,255,255,0.08);
-      --text: #ffffff;
-      --muted: rgba(255,255,255,0.55);
-      --accent: #6aa9ff; /* 现代蓝 */
-      --radius: 20px;
+    :root{
+      --bg:#0a0c10;
+      --card:rgba(255,255,255,.06);
+      --border:rgba(255,255,255,.10);
+      --text:#fff;
+      --muted:rgba(255,255,255,.55);
+      --accent:#6aa9ff;
+      --radius:20px;
     }
-
-    * { box-sizing: border-box; }
-
-    html, body {
-      margin: 0;
-      height: 100%;
-      background: radial-gradient(
-        1200px 600px at 50% -200px,
-        rgba(106,169,255,0.15),
-        transparent 60%
-      ), var(--bg);
-      color: var(--text);
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        "PingFang SC",
-        "Noto Sans SC",
-        Arial,
-        sans-serif;
+    *{ box-sizing:border-box; }
+    html,body{
+      margin:0; height:100%;
+      background: radial-gradient(1200px 600px at 50% -200px, rgba(106,169,255,0.15), transparent 60%), var(--bg);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Noto Sans SC",Arial,sans-serif;
     }
-
-    body {
-      padding:
-        env(safe-area-inset-top)
-        env(safe-area-inset-right)
-        env(safe-area-inset-bottom)
-        env(safe-area-inset-left);
+    body{
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
-
-    .page {
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .page{
+      min-height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding: 0 12px 14px;
     }
-
-    /* ===== Header ===== */
-    header {
-      text-align: center;
-      padding: clamp(22px, 6vw, 48px) 16px 16px;
+    header{
+      text-align:center;
+      padding: clamp(22px, 6vw, 48px) 10px 16px;
     }
-
-    .title {
+    .title{
+      margin:0;
       font-size: clamp(20px, 4.5vw, 34px);
-      font-weight: 600;
-      letter-spacing: 0.6px;
-      margin: 0;
+      font-weight: 650;
+      letter-spacing:.6px;
+    }
+    .subtitle{
+      margin-top:10px;
+      font-size:12px;
+      letter-spacing:4px;
+      color:var(--accent);
     }
 
-    .subtitle {
-      margin-top: 10px;
-      font-size: 12px;
-      letter-spacing: 4px;
-      color: var(--accent);
-    }
-
-    /* ===== Player Card ===== */
-    .card {
-      width: 100%;
-      max-width: 1120px;          /* 大屏限制宽度 */
-      margin: 0 auto;
-      background: linear-gradient(
-        180deg,
-        rgba(255,255,255,0.06),
-        rgba(255,255,255,0.02)
-      );
-      border: 1px solid var(--border);
+    .card{
+      width:100%;
+      max-width:1120px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+      border:1px solid var(--border);
       border-radius: var(--radius);
-      overflow: hidden;
+      overflow:hidden;
       box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
     }
 
-    .player {
-      width: 100%;
-      aspect-ratio: 16 / 9;  /* 默认：电脑/平板横向很好 */
-      background: #000;
+    /* ✅ 最稳的自适应：用 padding-top 固定比例（16:9） */
+    .player{
+      position:relative;
+      width:100%;
+      padding-top:56.25%; /* 16:9 */
+      background:#000;
+      min-height: 220px;  /* 防止极端情况下太小 */
+    }
+    .player iframe{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+      background:#000;
     }
 
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
+    /* 手机竖屏：更贴合屏幕（可选） */
+    @media (max-width:768px){
+      .card{ border-radius:14px; }
+      .player{ min-height: 240px; }
     }
 
-    /* ===== Mobile: 真正满宽 + 高度跟随宽度(16:9) ===== */
-    @media (max-width: 768px) {
-      .page { padding: 0 0 8px; }
-      header { padding-left: 14px; padding-right: 14px; }
+    footer{
+      margin:18px 0 10px;
+      font-size:11px;
+      color:var(--muted);
+      letter-spacing:1px;
+      text-align:center;
+    }
+  </style>
+</head>
 
-      .card {
-        max-width: none;      /* 关键：手机不要被 max-width 限制 */
-        border-radius: 14px; 
+<body>
+  <div class="page">
+    <header>
+      <h1 class="title">四海颂扬｜音乐事工</h1>
+      <div class="subtitle">FOUR SEAS PRAISE</div>
+    </header>
+
+    <div class="card">
+      <div class="player">
+        <iframe
+          src="https://www.youtube.com/embed/videoseries?list=PL_DvPl8vaxH7kAHtuZMZpOCUyACY-8hls&modestbranding=1&rel=0"
+          title="四海颂扬 音乐播放列表"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+
+    <footer>FOUR SEAS PRAISE · MUSIC MINISTRY</footer>
+  </div>
+</body>
+</html>
