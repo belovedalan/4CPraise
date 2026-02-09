@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <title>YouTube Playlist</title>
+  <style>
+    :root{
+      --bg:#000;
+      --fg:#fff;
+      --muted:rgba(255,255,255,.7);
+      --card:rgba(255,255,255,.08);
+      --card2:rgba(255,255,255,.12);
+      --radius:18px;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; background:var(--bg); color:var(--fg); font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "PingFang SC","Noto Sans CJK SC","Microsoft YaHei", sans-serif; }
+    a{ color:var(--fg); }
+    /* Safe area for iOS notch */
+    body{
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    .wrap{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding: clamp(12px, 3vw, 28px);
+    }
+
+    /* Player container: full height on small screens, tasteful max on big screens */
+    .player-shell{
+      width: min(1100px, 100%);
+      background: radial-gradient(1200px 600px at 50% 10%, rgba(255,255,255,.10), transparent 60%);
+      border-radius: var(--radius);
+      overflow:hidden;
+      box-shadow: 0 18px 60px rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    /* 16:9 by default */
+    .player{
+      width:100%;
+      aspect-ratio: 16 / 9;
+      background:#000;
+      position:relative;
+    }
+
+    /* On very tall / narrow screens, use more vertical space */
+    @media (max-aspect-ratio: 3/4){
+      .player{
+        aspect-ratio: 9 / 16;
+        min-height: 70vh;
+      }
+    }
+
+    iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+      background:#000;
+    }
+
+    /* Tap-to-play overlay (helps autoplay restrictions + looks clean) */
+    .overlay{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      padding:16px;
+      background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55));
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
+    .overlay[hidden]{ display:none; }
+
+    .panel{
+      width:min(520px, 92%);
+      background: linear-gradient(180deg, var(--card), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: calc(var(--radius) + 6px);
+      padding: 18px 18px 16px;
+      text-align:center;
+    }
+    .title{
+      font-size: clamp(18px, 2.6vw, 22px);
+      font-weight: 700;
+      margin: 0 0 10px;
+      letter-spacing: .2px;
+    }
+    .desc{
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .btnrow{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    button{
+      appearance:none;
+      border:0;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-weight: 700;
+      cursor:pointer;
+      background: rgba(255,255,255,.92);
+      color:#000;
+      transition: transform .08s ease, background .2s ease;
+    }
+    button:active{ transform: scale(.98); }
+    .ghost{
+      background: var(--card2);
+      color: var(--fg);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+
+    .footer{
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align:center;
+      max-width: 900px;
+    }
+    .footer code{ color: rgba(255,255,255,.85); }
+    .sr-only{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="player-shell" role="region" aria-label="YouTube 播放列表播放器">
+      <div class="player">
+        <!-- We set src via JS after user interaction to maximize compatibility -->
+        <iframe
+          id="yt"
+          title="YouTube Playlist"
+          loading="lazy"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+
+        <div class="overlay" id="overlay">
+          <div class="panel">
+            <h1 class="title">播放列表</h1>
+            <p class="desc">
+              点一次开始播放后，会按播放列表顺序自动连播。<br/>
+             （浏览器通常需要你先点一下，才允许播放声音。）
+            </p>
+            <div class="btnrow">
+              <button id="playBtn" type="button">开始播放</button>
+              <button id="openBtn" class="ghost" type="button">在 YouTube 打开</button>
+            </div>
+            <span class="sr-only" id="status" aria-live="polite"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      提示：更新 YouTube 播放列表后，此页面会自动展示最新内容（因为直接嵌入播放列表）。<br/>
+      需要改播放列表？把代码里的 <code>PLAYLIST_ID</code> 替换即可。
+    </div>
+  </div>
+
+  <noscript>
+    <div style="color:white;text-align:center;padding:16px;">
+      你的浏览器禁用了 JavaScript。请直接在 YouTube 打开播放列表：
+      <a href="https://youtube.com/playlist?list=PL_DvPl8vaxH7kAHtuZMZpOCUyACY-8hls" target="_blank" rel="noopener">打开</a>
+    </div>
+  </noscript>
+
+  <script>
+    (function(){
+      // === Config ===
+      const PLAYLIST_ID = "PL_DvPl8vaxH7kAHtuZMZpOCUyACY-8hls";
+      const YT_PLAYLIST_URL = "https://youtube.com/playlist?list=" + PLAYLIST_ID;
+
+      const iframe = document.getElementById("yt");
+      const overlay = document.getElementById("overlay");
+      const playBtn = document.getElementById("playBtn");
+      const openBtn = document.getElementById("openBtn");
+      const status = document.getElementById("status");
+
+      // Base embed URL (no autoplay)
+      const baseSrc =
+        "https://www.youtube.com/embed/videoseries?list=" + encodeURIComponent(PLAYLIST_ID) +
+        "&rel=0&modestbranding=1";
+
+      // On load, show the playlist player (no autoplay)
+      iframe.src = baseSrc;
+
+      // Start playing after a user gesture (best cross-device behavior)
+      function start(){
+        // Switch to autoplay after click; this helps iOS/Safari/Chrome policies
+        iframe.src = baseSrc + "&autoplay=1";
+        overlay.hidden = true;
+        status.textContent = "已开始播放。";
+      }
+
+      playBtn.addEventListener("click", start, { passive:true });
+      openBtn.addEventListener("click", function(){
+        window.open(YT_PLAYLIST_URL, "_blank", "noopener");
+      }, { passive:true });
+
+      // Also allow tapping anywhere on overlay to start (mobile-friendly)
+      overlay.addEventListener("click", function(e){
+        // Only start if user didn't click the "open" button
+        if (e.target === openBtn) return;
+        if (e.target === playBtn) return;
+        start();
+      }, { passive:true });
+    })();
+  </script>
+</body>
+</html>
