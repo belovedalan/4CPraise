@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0c10" />
   <title>四海颂扬｜音乐事工</title>
 
   <style>
@@ -11,30 +12,24 @@
       --card:rgba(255,255,255,.06);
       --border:rgba(255,255,255,.10);
       --text:#fff;
-      --muted:rgba(255,255,255,.55);
+      --muted:rgba(255,255,255,.60);
       --accent:#6aa9ff;
-      --radius:20px;
+      --radius:18px;
     }
-    *{ box-sizing:border-box; }
+    *{box-sizing:border-box}
     html,body{
-      margin:0; height:100%;
-      background: radial-gradient(1200px 600px at 50% -200px, rgba(106,169,255,0.15), transparent 60%), var(--bg);
+      height:100%;margin:0;
+      background:radial-gradient(1200px 600px at 50% -200px, rgba(106,169,255,.15), transparent 60%),var(--bg);
       color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Noto Sans SC",Arial,sans-serif;
     }
     body{
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
-    .page{
-      min-height:100%;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding: 0 12px 14px;
-    }
+
     header{
       text-align:center;
-      padding: clamp(22px, 6vw, 48px) 10px 16px;
+      padding: clamp(22px, 6vw, 48px) 14px 14px;
     }
     .title{
       margin:0;
@@ -49,25 +44,25 @@
       color:var(--accent);
     }
 
+    .shell{width:min(1200px,100%);margin:0 auto;padding:0 12px 14px}
     .card{
       width:100%;
-      max-width:1120px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
       border:1px solid var(--border);
-      border-radius: var(--radius);
+      border-radius:var(--radius);
       overflow:hidden;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+      box-shadow:0 24px 70px rgba(0,0,0,.55);
     }
 
-    /* ✅ 最稳的自适应：用 padding-top 固定比例（16:9） */
+    /* ✅ 最稳的 16:9 自适应（不靠 aspect-ratio） */
     .player{
       position:relative;
       width:100%;
       padding-top:56.25%; /* 16:9 */
       background:#000;
-      min-height: 220px;  /* 防止极端情况下太小 */
+      min-height:240px;
     }
-    .player iframe{
+    iframe{
       position:absolute;
       inset:0;
       width:100%;
@@ -77,39 +72,92 @@
       background:#000;
     }
 
-    /* 手机竖屏：更贴合屏幕（可选） */
-    @media (max-width:768px){
-      .card{ border-radius:14px; }
-      .player{ min-height: 240px; }
+    .actions{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+      padding: 12px 10px 14px;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:650;
+      font-size:13px;
+      cursor:pointer;
+      text-decoration:none;
+      letter-spacing:.2px;
+    }
+    .btn.primary{
+      border-color: rgba(106,169,255,.45);
+      background: rgba(106,169,255,.14);
+    }
+    .hint{
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+      padding: 0 12px 10px;
     }
 
     footer{
-      margin:18px 0 10px;
-      font-size:11px;
-      color:var(--muted);
-      letter-spacing:1px;
+      margin:14px 0 10px;
       text-align:center;
+      color:var(--muted);
+      font-size:11px;
+      letter-spacing:1px;
+      padding:0 12px;
+    }
+
+    @media (max-width:768px){
+      .shell{padding-left:10px;padding-right:10px}
+      .card{border-radius:14px}
+      .player{min-height:220px}
     }
   </style>
 </head>
 
 <body>
-  <div class="page">
-    <header>
-      <h1 class="title">四海颂扬｜音乐事工</h1>
-      <div class="subtitle">FOUR SEAS PRAISE</div>
-    </header>
+  <header>
+    <h1 class="title">四海颂扬｜音乐事工</h1>
+    <div class="subtitle">FOUR SEAS PRAISE</div>
+  </header>
 
-    <div class="card">
+  <div class="shell">
+    <section class="card">
       <div class="player">
+        <!-- YouTube 原生播放列表：会随 playlist 更新 -->
         <iframe
-          src="https://www.youtube.com/embed/videoseries?list=PL_DvPl8vaxH7kAHtuZMZpOCUyACY-8hls&modestbranding=1&rel=0"
-          title="四海颂扬 音乐播放列表"
+          src="https://www.youtube.com/embed/videoseries?list=PL_DvPl8vaxH7kAHtuZMZpOCUyACY-8hls&rel=0&modestbranding=1"
+          title="四海颂扬｜播放列表"
           allow="autoplay; encrypted-media; picture-in-picture"
           allowfullscreen>
         </iframe>
       </div>
-    </div>
+
+      <div class="actions">
+        <a class="btn primary"
+           href="https://youtube.com/playlist?list=PL_DvPl8vaxH7kAHtuZMZpOCUyACY-8hls"
+           target="_blank" rel="noopener">
+          查看完整列表（YouTube）
+        </a>
+        <a class="btn"
+           href="https://www.youtube.com/@"
+           target="_blank" rel="noopener"
+           style="display:none">
+          频道主页
+        </a>
+      </div>
+
+      <div class="hint">
+        提示：播放器内的“播放列表图标”可展开/收起列表。不同设备上显示方式可能不同（由 YouTube 控制）。
+      </div>
+    </section>
 
     <footer>FOUR SEAS PRAISE · MUSIC MINISTRY</footer>
   </div>
