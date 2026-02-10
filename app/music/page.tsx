@@ -39,7 +39,6 @@ export default function MusicPage() {
   const [playMode, setPlayMode] = useState<PlayMode>("LIST_LOOP");
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // 🔒 锁定核心播放逻辑
   const stateRef = useRef({ active, playMode, filtered: [] as { it: Item; idx: number }[] });
   const playerRef = useRef<any>(null);
   const playerHostRef = useRef<HTMLDivElement | null>(null);
@@ -143,14 +142,18 @@ export default function MusicPage() {
     }}>
       <style>{`
         :root{
-          /* ✅ 极致透明：调低至 0.2 并增强饱和度，实现真正的“通透卡片” */
           --glass: rgba(255, 255, 255, 0.2); 
           --line: rgba(255, 255, 255, 0.35);
           --accent: #6D28D9; --text: #111827;
           --font-display: "SF Pro Display", "PingFang SC", "Inter", system-ui, sans-serif;
+          /* MacBook Air 风格的工业圆角值 */
+          --mac-radius: 36px;
         }
         .page{ 
-          min-height:100vh; padding:24px 24px 60px; color:var(--text); 
+          min-height:100vh; 
+          /* 电脑端保留页边距 */
+          padding: 24px; 
+          color:var(--text); 
           font-family: var(--font-display);
           background: radial-gradient(1100px 700px at 15% -10%, rgba(109,40,217,.25), transparent 75%), 
                       linear-gradient(180deg, #F0F4FF, #F9FAFB);
@@ -158,13 +161,12 @@ export default function MusicPage() {
         }
         .container{ max-width:1440px; margin:0 auto; display: flex; flex-direction: column; gap: 24px; }
         
-        /* ✅ 统一所有卡片的毛玻璃参数 */
         .glass { 
           background: var(--glass); 
           backdrop-filter: blur(40px) saturate(240%); 
           -webkit-backdrop-filter: blur(40px) saturate(240%); 
           border: 1px solid var(--line); 
-          border-radius: 32px; 
+          border-radius: var(--mac-radius); 
           box-shadow: 0 20px 60px rgba(0,0,0,0.03); 
           overflow: hidden;
         }
@@ -176,7 +178,6 @@ export default function MusicPage() {
         .sub{ margin:0; margin-top:4px; font-size:10px; letter-spacing:6px; color:rgba(109, 40, 217, 0.6); line-height:1; font-weight: 800; text-transform: uppercase; }
 
         .mainGrid{ display:grid; grid-template-columns: 2.1fr 0.9fr; gap:24px; align-items: start; }
-        @media (max-width:1024px){ .mainGrid{ grid-template-columns:1fr; } .container { padding: 0 12px; } }
 
         .playerBox{ position:relative; width:100%; padding-top:56.25%; background:#000; }
         .playerInner{ position:absolute; inset:0; }
@@ -216,21 +217,35 @@ export default function MusicPage() {
         .item.active::before{ content:""; position:absolute; left:0; height:30%; width:5px; background:var(--accent); border-radius:0 10px 10px 0; }
         
         .trackIdx { font-size: 12px; font-weight: 800; color: rgba(0,0,0,0.15); font-variant-numeric: tabular-nums; }
-        .itemThumb{ width:110px; height:62px; border-radius:14px; overflow:hidden; border: 1px solid rgba(0,0,0,0.03); background:#000; }
+        .itemThumb{ width:110px; height:62px; border-radius:14px; overflow:hidden; border: 1px solid rgba(0,0,0,0.03); background:#000; flex-shrink: 0; }
         .itemThumb img{ width: 100%; height: 100%; object-fit: cover; }
 
         .itemTitle { font-size: 14px; font-weight: 800; line-height: 1.45; color: #1f2937; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; letter-spacing: -0.2px; }
         .itemSub { font-size: 11px; color: rgba(0,0,0,0.3); font-weight: 700; margin-top: 4px; text-transform: uppercase; }
         
-        @media (max-width:640px){ .nowPlayingArea { flex-direction: row; align-items: center; padding: 16px 20px; } .playerControls { gap: 16px; } .item{ grid-template-columns: 30px 90px 1fr; padding: 12px 20px; gap: 14px; } .itemThumb { width: 90px; height: 50px; } }
-        .footer{ margin-top:60px; text-align:center; color:rgba(0,0,0,0.2); font-size:11px; font-weight: 700; letter-spacing: 1px; }
+        /* 手机端专项修正 */
+        @media (max-width:1024px){ 
+          .page { padding: 12px 8px 40px; } /* 极大幅度减小手机端页边距 */
+          .container { gap: 16px; }
+          .mainGrid { grid-template-columns: 1fr; } 
+          .glass { border-radius: 24px; } /* 手机端圆角稍微收敛，更协调 */
+          .header { padding: 16px 20px; }
+          .logoWrap { gap: 12px; }
+          .brandTitle { font-size: 20px; }
+          .nowPlayingArea { padding: 16px 20px; }
+          .playerControls { gap: 16px; }
+          .item { grid-template-columns: 30px 90px 1fr; padding: 12px 16px; gap: 14px; } 
+          .itemThumb { width: 90px; height: 50px; }
+          .scroll { max-height: 60vh; min-height: 300px; }
+        }
+
+        .footer{ margin-top:40px; text-align:center; color:rgba(0,0,0,0.25); font-size:11px; font-weight: 700; letter-spacing: 1px; }
       `}</style>
 
       <div className="container" onClick={(e) => e.stopPropagation()}>
-        {/* 标题卡片 */}
         <header className="header glass">
           <div className="logoWrap">
-            <img src="/logo.png" style={{height:'52px'}} alt="Logo" />
+            <img src="/logo.png" style={{height:'48px'}} alt="Logo" />
             <div>
               <div className="brandTitle">四海颂扬｜音乐事工</div>
               <div className="sub">FOUR SEAS PRAISE</div>
@@ -239,7 +254,6 @@ export default function MusicPage() {
         </header>
 
         <div className="mainGrid">
-          {/* 播放器卡片 */}
           <section className="glass flex flex-col">
             <div className="playerBox">
               <div className="playerInner" ref={playerHostRef} />
@@ -270,7 +284,6 @@ export default function MusicPage() {
             )}
           </section>
 
-          {/* 列表卡片 */}
           <aside className="glass flex flex-col">
             <div className="listHeaderArea">
               <div className="listTitleRow">
