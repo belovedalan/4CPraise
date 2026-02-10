@@ -140,44 +140,42 @@ export default function MusicPage() {
     <main className="page" onClick={() => {
       if (playerReadyRef.current && playerRef.current?.getPlayerState() !== 1) playerRef.current?.playVideo();
     }}>
+      <div className="bg-fixed-layer" />
+
       <style>{`
         :root{
           --glass: rgba(255, 255, 255, 0.2); 
           --line: rgba(255, 255, 255, 0.35);
           --accent: #6D28D9; --text: #111827;
           --font-display: "SF Pro Display", "PingFang SC", "Inter", system-ui, sans-serif;
-          /* MacBook Air 风格的工业圆角值 */
           --mac-radius: 36px;
         }
-        .page{ 
-          min-height:100vh; 
-          /* 电脑端保留页边距 */
-          padding: 24px; 
-          color:var(--text); 
-          font-family: var(--font-display);
+        
+        .bg-fixed-layer {
+          position: fixed; inset: 0; z-index: -1;
           background: radial-gradient(1100px 700px at 15% -10%, rgba(109,40,217,.25), transparent 75%), 
                       linear-gradient(180deg, #F0F4FF, #F9FAFB);
-          -webkit-font-smoothing: antialiased;
+          background-attachment: fixed; pointer-events: none;
         }
-        .container{ max-width:1440px; margin:0 auto; display: flex; flex-direction: column; gap: 24px; }
+
+        .page{ 
+          position: relative; min-height:100vh; padding: 24px; color:var(--text); 
+          font-family: var(--font-display); -webkit-font-smoothing: antialiased;
+        }
+        
+        .container{ max-width:1440px; margin:0 auto; display: flex; flex-direction: column; gap: 24px; position: relative; z-index: 1; }
         
         .glass { 
-          background: var(--glass); 
-          backdrop-filter: blur(40px) saturate(240%); 
-          -webkit-backdrop-filter: blur(40px) saturate(240%); 
-          border: 1px solid var(--line); 
-          border-radius: var(--mac-radius); 
-          box-shadow: 0 20px 60px rgba(0,0,0,0.03); 
-          overflow: hidden;
+          background: var(--glass); backdrop-filter: blur(40px) saturate(240%); -webkit-backdrop-filter: blur(40px) saturate(240%); 
+          border: 1px solid var(--line); border-radius: var(--mac-radius); box-shadow: 0 20px 60px rgba(0,0,0,0.03); overflow: hidden;
         }
 
         .header{ padding:20px 32px; display:flex; align-items:center; }
         .logoWrap{ display:flex; align-items:center; gap:20px; }
-        
         .brandTitle { font-size: 26px; font-weight: 900; letter-spacing: -1.2px; background: linear-gradient(180deg, #111827, #4B5563); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .sub{ margin:0; margin-top:4px; font-size:10px; letter-spacing:6px; color:rgba(109, 40, 217, 0.6); line-height:1; font-weight: 800; text-transform: uppercase; }
 
-        .mainGrid{ display:grid; grid-template-columns: 2.1fr 0.9fr; gap:24px; align-items: start; }
+        .mainGrid{ display:grid; grid-template-columns: 2.1fr 0.9fr; gap:24px; align-items: start; margin-bottom: 8px; }
 
         .playerBox{ position:relative; width:100%; padding-top:56.25%; background:#000; }
         .playerInner{ position:absolute; inset:0; }
@@ -191,55 +189,53 @@ export default function MusicPage() {
         .controlBtn { background: none; border: none; cursor: pointer; color: rgba(0,0,0,0.3); display: flex; align-items: center; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
         .controlBtn:hover { color: var(--accent); transform: scale(1.15); }
 
-        .listHeaderArea{ padding: 24px 28px; border-bottom: 1px solid var(--line); }
-        .listTitleRow{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .listHeaderArea{ padding: 18px 28px 14px; border-bottom: 1px solid var(--line); }
+        .listTitleRow{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .listTitleInfo { display: flex; align-items: center; gap: 10px; }
         .listMainTitle { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
-        .listCounter { font-size: 11px; font-weight: 800; color: var(--accent); background: rgba(109,40,217,0.08); padding: 2px 8px; border-radius: 6px; }
+        .listCounter { font-size: 11px; font-weight: 800; color: var(--accent); padding-top: 2px; }
         
         .toolbarInTitle{ display: flex; align-items: center; gap: 14px; }
         .iconBtn{ background: none; border: none; cursor: pointer; color: rgba(0,0,0,0.2); transition: all 0.3s ease; }
         .iconBtn.active{ color: var(--accent); transform: scale(1.1); }
 
         .searchInside{ 
-          display:flex; align-items:center; gap:12px; padding:12px 18px; 
+          display:flex; align-items:center; gap:12px; padding:10px 18px; 
           border-radius:16px; background:rgba(255,255,255,0.25); border: 1px solid var(--line);
-          transition: all 0.3s;
         }
         .searchInside input { border: none; outline: none; background: transparent; width: 100%; font-size: 14px; font-weight: 600; color: #111; }
 
-        .scroll{ max-height: calc(100vh - 400px); min-height: 480px; overflow-y:auto; }
+        .scroll{ max-height: calc(100vh - 380px); min-height: 480px; overflow-y:auto; }
         .scroll::-webkit-scrollbar { width:4px; }
         .scroll::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.05); border-radius:10px; }
         
-        .item{ display:grid; grid-template-columns: 40px 110px 1fr; gap:18px; padding:16px 28px; cursor:pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); align-items:center; }
+        .item{ display:grid; grid-template-columns: 36px 110px 1fr; gap:18px; padding:16px 28px; cursor:pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); align-items:center; }
         .item:hover { background: rgba(255,255,255,0.2); transform: translateX(6px); }
         .item.active{ background:rgba(109,40,217,0.08); position:relative; }
         .item.active::before{ content:""; position:absolute; left:0; height:30%; width:5px; background:var(--accent); border-radius:0 10px 10px 0; }
         
-        .trackIdx { font-size: 12px; font-weight: 800; color: rgba(0,0,0,0.15); font-variant-numeric: tabular-nums; }
-        .itemThumb{ width:110px; height:62px; border-radius:14px; overflow:hidden; border: 1px solid rgba(0,0,0,0.03); background:#000; flex-shrink: 0; }
+        .trackIdx { font-size: 12px; font-weight: 800; color: rgba(0,0,0,0.15); font-variant-numeric: tabular-nums; transition: color 0.3s ease; }
+        .item:hover .trackIdx { color: var(--accent); opacity: 0.8; }
+        .item.active .trackIdx { color: var(--accent); opacity: 1; }
+        
+        /* ✅ 核心修正：增加 flex-shrink: 0 和固定宽度，防止标题挤压缩略图 */
+        .itemThumb{ width:110px; min-width:110px; height:62px; border-radius:14px; overflow:hidden; border: 1px solid rgba(0,0,0,0.03); background:#000; flex-shrink: 0; }
         .itemThumb img{ width: 100%; height: 100%; object-fit: cover; }
 
         .itemTitle { font-size: 14px; font-weight: 800; line-height: 1.45; color: #1f2937; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; letter-spacing: -0.2px; }
         .itemSub { font-size: 11px; color: rgba(0,0,0,0.3); font-weight: 700; margin-top: 4px; text-transform: uppercase; }
         
-        /* 手机端专项修正 */
         @media (max-width:1024px){ 
-          .page { padding: 12px 8px 40px; } /* 极大幅度减小手机端页边距 */
-          .container { gap: 16px; }
-          .mainGrid { grid-template-columns: 1fr; } 
-          .glass { border-radius: 24px; } /* 手机端圆角稍微收敛，更协调 */
-          .header { padding: 16px 20px; }
-          .logoWrap { gap: 12px; }
-          .brandTitle { font-size: 20px; }
+          .page { padding: 12px 8px 30px; }
+          .mainGrid { grid-template-columns: 1fr; margin-bottom: 12px; } 
+          .glass { border-radius: 24px; }
           .nowPlayingArea { padding: 16px 20px; }
-          .playerControls { gap: 16px; }
-          .item { grid-template-columns: 30px 90px 1fr; padding: 12px 16px; gap: 14px; } 
-          .itemThumb { width: 90px; height: 50px; }
-          .scroll { max-height: 60vh; min-height: 300px; }
+          /* 手机端同步锁定缩略图宽度 */
+          .item { grid-template-columns: 24px 84px 1fr; padding: 12px 16px; gap: 14px; } 
+          .itemThumb { width: 84px; min-width: 84px; height: 47px; }
         }
 
-        .footer{ margin-top:40px; text-align:center; color:rgba(0,0,0,0.25); font-size:11px; font-weight: 700; letter-spacing: 1px; }
+        .footer{ margin-top:20px; text-align:center; color:rgba(0,0,0,0.2); font-size:11px; font-weight: 700; letter-spacing: 1px; }
       `}</style>
 
       <div className="container" onClick={(e) => e.stopPropagation()}>
@@ -287,7 +283,7 @@ export default function MusicPage() {
           <aside className="glass flex flex-col">
             <div className="listHeaderArea">
               <div className="listTitleRow">
-                <div className="flex items-center gap-3">
+                <div className="listTitleInfo">
                   <div className="listMainTitle">播放列表</div>
                   <div className="listCounter">{(active + 1)}/{items.length}</div>
                 </div>
@@ -332,7 +328,7 @@ export default function MusicPage() {
 
         <footer className="footer">
           <div>© {new Date().getFullYear()} 四海颂扬 FOUR SEAS PRAISE MUSIC MINISTRIES</div>
-          <div className="mt-2 opacity-50 uppercase tracking-widest">{meta}</div>
+          <div className="mt-2 opacity-60 uppercase tracking-widest">{meta}</div>
         </footer>
       </div>
     </main>
