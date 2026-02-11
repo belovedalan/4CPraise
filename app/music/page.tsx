@@ -142,7 +142,7 @@ export default function MusicPage() {
     }}>
       <style>{`
         :root{
-          --line: rgba(255, 255, 255, 0.3);
+          --line: rgba(255, 255, 255, 0.4);
           --accent: #6D28D9; --text: #111827;
           --font-display: "SF Pro Display", "PingFang SC", "Inter", system-ui, sans-serif;
           --mac-radius: 36px;
@@ -150,6 +150,7 @@ export default function MusicPage() {
         .page{ 
           min-height:100vh; padding: 24px; color:var(--text); 
           font-family: var(--font-display); -webkit-font-smoothing: antialiased;
+          /* ✅ 回退到上一个版本：浅灰色背景 */
           background: #F3F4F6;
           background-attachment: scroll;
         }
@@ -157,9 +158,10 @@ export default function MusicPage() {
         
         .glass { 
           position: relative;
-          background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4)),
-                      radial-gradient(at 0% 0%, rgba(109,40,217,0.15), transparent 50%),
-                      radial-gradient(at 100% 100%, rgba(224,231,255,0.4), transparent 50%);
+          /* ✅ 核心修改：加深了渐变色，增强紫色流光感 */
+          background: linear-gradient(135deg, rgba(255,255,255,0.65), rgba(255,255,255,0.4)),
+                      radial-gradient(at 0% 0%, rgba(109,40,217,0.25), transparent 50%),
+                      radial-gradient(at 100% 100%, rgba(224,231,255,0.5), transparent 50%);
           backdrop-filter: blur(45px) saturate(200%); 
           -webkit-backdrop-filter: blur(45px) saturate(200%); 
           border: 1px solid var(--line); 
@@ -209,7 +211,7 @@ export default function MusicPage() {
         
         .item{ display:grid; grid-template-columns: 36px 110px 1fr; gap:18px; padding:16px 28px; cursor:pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); align-items:center; }
         .item:hover { background: rgba(255,255,255,0.2); transform: translateX(8px); }
-        /* ✅ 修正点：active 状态不再包含背景色 */
+        /* ✅ 锁定：正在播放的歌不加紫色背景 */
         .item.active{ position:relative; background: transparent; }
         .item.active::before{ content:""; position:absolute; left:0; height:30%; width:5px; background:var(--accent); border-radius:0 10px 10px 0; }
         
@@ -260,7 +262,7 @@ export default function MusicPage() {
                 
                 <div className="playerControls">
                   <button className="controlBtn" onClick={(e) => { e.stopPropagation(); handlePlayPrev(); }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
                   </button>
                   <button className="controlBtn" onClick={togglePlay}>
                     {isPlaying ? (
@@ -270,7 +272,7 @@ export default function MusicPage() {
                     )}
                   </button>
                   <button className="controlBtn" onClick={(e) => { e.stopPropagation(); handlePlayNext(); }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
                   </button>
                 </div>
               </div>
