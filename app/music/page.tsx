@@ -140,40 +140,38 @@ export default function MusicPage() {
     <main className="page" onClick={() => {
       if (playerReadyRef.current && playerRef.current?.getPlayerState() !== 1) playerRef.current?.playVideo();
     }}>
-      <div className="bg-fixed-layer" />
-
       <style>{`
         :root{
-          --glass: rgba(255, 255, 255, 0.2); 
-          --line: rgba(255, 255, 255, 0.35);
+          --line: rgba(255, 255, 255, 0.3);
           --accent: #6D28D9; --text: #111827;
           --font-display: "SF Pro Display", "PingFang SC", "Inter", system-ui, sans-serif;
           --mac-radius: 36px;
         }
-        
-        .bg-fixed-layer {
-          position: fixed; inset: 0; z-index: -1;
-          background: radial-gradient(1100px 700px at 15% -10%, rgba(109,40,217,.25), transparent 75%), 
-                      linear-gradient(180deg, #F0F4FF, #F9FAFB);
-          background-attachment: fixed; pointer-events: none;
-        }
-
         .page{ 
-          position: relative; min-height:100vh; padding: 24px; color:var(--text); 
+          min-height:100vh; padding: 24px; color:var(--text); 
           font-family: var(--font-display); -webkit-font-smoothing: antialiased;
+          background: #F3F4F6;
+          background-attachment: scroll;
         }
-        
-        .container{ max-width:1440px; margin:0 auto; display: flex; flex-direction: column; gap: 24px; position: relative; z-index: 1; }
+        .container{ max-width:1440px; margin:0 auto; display: flex; flex-direction: column; gap: 24px; }
         
         .glass { 
-          background: var(--glass); backdrop-filter: blur(40px) saturate(240%); -webkit-backdrop-filter: blur(40px) saturate(240%); 
-          border: 1px solid var(--line); border-radius: var(--mac-radius); box-shadow: 0 20px 60px rgba(0,0,0,0.03); overflow: hidden;
+          position: relative;
+          background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4)),
+                      radial-gradient(at 0% 0%, rgba(109,40,217,0.15), transparent 50%),
+                      radial-gradient(at 100% 100%, rgba(224,231,255,0.4), transparent 50%);
+          backdrop-filter: blur(45px) saturate(200%); 
+          -webkit-backdrop-filter: blur(45px) saturate(200%); 
+          border: 1px solid var(--line); 
+          border-radius: var(--mac-radius); 
+          box-shadow: 0 10px 40px rgba(0,0,0,0.02);
+          overflow: hidden;
         }
 
         .header{ padding:20px 32px; display:flex; align-items:center; }
         .logoWrap{ display:flex; align-items:center; gap:20px; }
         .brandTitle { font-size: 26px; font-weight: 900; letter-spacing: -1.2px; background: linear-gradient(180deg, #111827, #4B5563); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .sub{ margin:0; margin-top:4px; font-size:10px; letter-spacing:6px; color:rgba(109, 40, 217, 0.6); line-height:1; font-weight: 800; text-transform: uppercase; }
+        .sub{ margin:0; margin-top:4px; font-size:10px; letter-spacing:6px; color:var(--accent); opacity: 0.6; line-height:1; font-weight: 800; text-transform: uppercase; }
 
         .mainGrid{ display:grid; grid-template-columns: 2.1fr 0.9fr; gap:24px; align-items: start; margin-bottom: 8px; }
 
@@ -201,7 +199,7 @@ export default function MusicPage() {
 
         .searchInside{ 
           display:flex; align-items:center; gap:12px; padding:10px 18px; 
-          border-radius:16px; background:rgba(255,255,255,0.25); border: 1px solid var(--line);
+          border-radius:16px; background:rgba(255,255,255,0.4); border: 1px solid var(--line);
         }
         .searchInside input { border: none; outline: none; background: transparent; width: 100%; font-size: 14px; font-weight: 600; color: #111; }
 
@@ -210,15 +208,15 @@ export default function MusicPage() {
         .scroll::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.05); border-radius:10px; }
         
         .item{ display:grid; grid-template-columns: 36px 110px 1fr; gap:18px; padding:16px 28px; cursor:pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); align-items:center; }
-        .item:hover { background: rgba(255,255,255,0.2); transform: translateX(6px); }
-        .item.active{ background:rgba(109,40,217,0.08); position:relative; }
+        .item:hover { background: rgba(255,255,255,0.2); transform: translateX(8px); }
+        /* ✅ 修正点：active 状态不再包含背景色 */
+        .item.active{ position:relative; background: transparent; }
         .item.active::before{ content:""; position:absolute; left:0; height:30%; width:5px; background:var(--accent); border-radius:0 10px 10px 0; }
         
         .trackIdx { font-size: 12px; font-weight: 800; color: rgba(0,0,0,0.15); font-variant-numeric: tabular-nums; transition: color 0.3s ease; }
         .item:hover .trackIdx { color: var(--accent); opacity: 0.8; }
         .item.active .trackIdx { color: var(--accent); opacity: 1; }
         
-        /* ✅ 核心修正：增加 flex-shrink: 0 和固定宽度，防止标题挤压缩略图 */
         .itemThumb{ width:110px; min-width:110px; height:62px; border-radius:14px; overflow:hidden; border: 1px solid rgba(0,0,0,0.03); background:#000; flex-shrink: 0; }
         .itemThumb img{ width: 100%; height: 100%; object-fit: cover; }
 
@@ -230,9 +228,8 @@ export default function MusicPage() {
           .mainGrid { grid-template-columns: 1fr; margin-bottom: 12px; } 
           .glass { border-radius: 24px; }
           .nowPlayingArea { padding: 16px 20px; }
-          /* 手机端同步锁定缩略图宽度 */
-          .item { grid-template-columns: 24px 84px 1fr; padding: 12px 16px; gap: 14px; } 
-          .itemThumb { width: 84px; min-width: 84px; height: 47px; }
+          .item { grid-template-columns: 30px 90px 1fr; padding: 12px 16px; gap: 14px; } 
+          .itemThumb { width: 90px; min-width: 90px; height: 50px; }
         }
 
         .footer{ margin-top:20px; text-align:center; color:rgba(0,0,0,0.2); font-size:11px; font-weight: 700; letter-spacing: 1px; }
@@ -263,7 +260,7 @@ export default function MusicPage() {
                 
                 <div className="playerControls">
                   <button className="controlBtn" onClick={(e) => { e.stopPropagation(); handlePlayPrev(); }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
                   </button>
                   <button className="controlBtn" onClick={togglePlay}>
                     {isPlaying ? (
@@ -273,7 +270,7 @@ export default function MusicPage() {
                     )}
                   </button>
                   <button className="controlBtn" onClick={(e) => { e.stopPropagation(); handlePlayNext(); }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
                   </button>
                 </div>
               </div>
@@ -328,7 +325,7 @@ export default function MusicPage() {
 
         <footer className="footer">
           <div>© {new Date().getFullYear()} 四海颂扬 FOUR SEAS PRAISE MUSIC MINISTRIES</div>
-          <div className="mt-2 opacity-60 uppercase tracking-widest">{meta}</div>
+          <div className="mt-2 opacity-50 uppercase tracking-widest">{meta}</div>
         </footer>
       </div>
     </main>
