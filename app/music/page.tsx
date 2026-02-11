@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Head from "next/head"; // 引入 Next.js 的 Head 组件
 
 type Item = { videoId: string; title: string; channel: string; thumb: string };
 
@@ -137,199 +138,207 @@ export default function MusicPage() {
   }, [activeId]);
 
   return (
-    <main className="page" onClick={() => {
-      if (playerReadyRef.current && playerRef.current?.getPlayerState() !== 1) playerRef.current?.playVideo();
-    }}>
-      <style>{`
-        :root{
-          --line: rgba(255, 255, 255, 0.4);
-          --accent: #6D28D9; --text: #111827;
-          --font-display: "SF Pro Display", "PingFang SC", "Inter", system-ui, sans-serif;
-          --mac-radius: 36px;
-        }
-        .page{ 
-          min-height:100vh; padding: 24px; color:var(--text); 
-          font-family: var(--font-display); -webkit-font-smoothing: antialiased;
-          /* ✅ 回退到上一个版本：浅灰色背景 */
-          background: #F3F4F6;
-          background-attachment: scroll;
-        }
-        .container{ max-width:1440px; margin:0 auto; display: flex; flex-direction: column; gap: 24px; }
-        
-        .glass { 
-          position: relative;
-          /* ✅ 核心修改：加深了渐变色，增强紫色流光感 */
-          background: linear-gradient(135deg, rgba(255,255,255,0.65), rgba(255,255,255,0.4)),
-                      radial-gradient(at 0% 0%, rgba(109,40,217,0.25), transparent 50%),
-                      radial-gradient(at 100% 100%, rgba(224,231,255,0.5), transparent 50%);
-          backdrop-filter: blur(45px) saturate(200%); 
-          -webkit-backdrop-filter: blur(45px) saturate(200%); 
-          border: 1px solid var(--line); 
-          border-radius: var(--mac-radius); 
-          box-shadow: 0 10px 40px rgba(0,0,0,0.02);
-          overflow: hidden;
-        }
+    <>
+      {/* ✅ 新增：在浏览器标签页显示 Logo */}
+      <Head>
+        <title>四海颂扬｜音乐事工</title>
+        <link rel="icon" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+      </Head>
 
-        .header{ padding:20px 32px; display:flex; align-items:center; }
-        .logoWrap{ display:flex; align-items:center; gap:20px; }
-        .brandTitle { font-size: 26px; font-weight: 900; letter-spacing: -1.2px; background: linear-gradient(180deg, #111827, #4B5563); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .sub{ margin:0; margin-top:4px; font-size:10px; letter-spacing:6px; color:var(--accent); opacity: 0.6; line-height:1; font-weight: 800; text-transform: uppercase; }
+      <main className="page" onClick={() => {
+        if (playerReadyRef.current && playerRef.current?.getPlayerState() !== 1) playerRef.current?.playVideo();
+      }}>
+        <style>{`
+          :root{
+            --line: rgba(255, 255, 255, 0.4);
+            --accent: #6D28D9; --text: #111827;
+            --font-display: "SF Pro Display", "PingFang SC", "Inter", system-ui, sans-serif;
+            --mac-radius: 36px;
+          }
+          .page{ 
+            min-height:100vh; padding: 24px; color:var(--text); 
+            font-family: var(--font-display); -webkit-font-smoothing: antialiased;
+            background: #F3F4F6;
+            background-attachment: scroll;
+          }
+          .container{ max-width:1440px; margin:0 auto; display: flex; flex-direction: column; gap: 24px; }
+          
+          .glass { 
+            position: relative;
+            background: linear-gradient(135deg, rgba(255,255,255,0.65), rgba(255,255,255,0.4)),
+                        radial-gradient(at 0% 0%, rgba(109,40,217,0.25), transparent 50%),
+                        radial-gradient(at 100% 100%, rgba(224,231,255,0.5), transparent 50%);
+            backdrop-filter: blur(45px) saturate(200%); 
+            -webkit-backdrop-filter: blur(45px) saturate(200%); 
+            border: 1px solid var(--line); 
+            border-radius: var(--mac-radius); 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.02);
+            overflow: hidden;
+          }
 
-        .mainGrid{ display:grid; grid-template-columns: 2.1fr 0.9fr; gap:24px; align-items: start; margin-bottom: 8px; }
+          .header{ padding:20px 32px; display:flex; align-items:center; }
+          .logoWrap{ display:flex; align-items:center; gap:20px; }
+          .brandTitle { font-size: 26px; font-weight: 900; letter-spacing: -1.2px; background: linear-gradient(180deg, #111827, #4B5563); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+          .sub{ margin:0; margin-top:4px; font-size:10px; letter-spacing:6px; color:var(--accent); opacity: 0.6; line-height:1; font-weight: 800; text-transform: uppercase; }
 
-        .playerBox{ position:relative; width:100%; padding-top:56.25%; background:#000; }
-        .playerInner{ position:absolute; inset:0; }
-        
-        .nowPlayingArea{ padding: 22px 28px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: nowrap; }
-        .titleContent { flex: 1; min-width: 0; }
-        .nowLabel { font-size: 10px; font-weight: 900; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; opacity: 0.8; }
-        .nowPlayingTitle { font-size: 20px; font-weight: 850; letter-spacing: -0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #111; }
+          .mainGrid{ display:grid; grid-template-columns: 2.1fr 0.9fr; gap:24px; align-items: start; margin-bottom: 8px; }
 
-        .playerControls { display: flex; align-items: center; gap: 24px; flex-shrink: 0; }
-        .controlBtn { background: none; border: none; cursor: pointer; color: rgba(0,0,0,0.3); display: flex; align-items: center; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
-        .controlBtn:hover { color: var(--accent); transform: scale(1.15); }
+          .playerBox{ position:relative; width:100%; padding-top:56.25%; background:#000; }
+          .playerInner{ position:absolute; inset:0; }
+          
+          .nowPlayingArea{ padding: 22px 28px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: nowrap; }
+          .titleContent { flex: 1; min-width: 0; }
+          .nowLabel { font-size: 10px; font-weight: 900; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; opacity: 0.8; }
+          .nowPlayingTitle { font-size: 20px; font-weight: 850; letter-spacing: -0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #111; }
 
-        .listHeaderArea{ padding: 18px 28px 14px; border-bottom: 1px solid var(--line); }
-        .listTitleRow{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .listTitleInfo { display: flex; align-items: center; gap: 10px; }
-        .listMainTitle { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
-        .listCounter { font-size: 11px; font-weight: 800; color: var(--accent); padding-top: 2px; }
-        
-        .toolbarInTitle{ display: flex; align-items: center; gap: 14px; }
-        .iconBtn{ background: none; border: none; cursor: pointer; color: rgba(0,0,0,0.2); transition: all 0.3s ease; }
-        .iconBtn.active{ color: var(--accent); transform: scale(1.1); }
+          .playerControls { display: flex; align-items: center; gap: 24px; flex-shrink: 0; }
+          .controlBtn { background: none; border: none; cursor: pointer; color: rgba(0,0,0,0.3); display: flex; align-items: center; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+          .controlBtn:hover { color: var(--accent); transform: scale(1.15); }
 
-        .searchInside{ 
-          display:flex; align-items:center; gap:12px; padding:10px 18px; 
-          border-radius:16px; background:rgba(255,255,255,0.4); border: 1px solid var(--line);
-        }
-        .searchInside input { border: none; outline: none; background: transparent; width: 100%; font-size: 14px; font-weight: 600; color: #111; }
+          .listHeaderArea{ padding: 18px 28px 14px; border-bottom: 1px solid var(--line); }
+          .listTitleRow{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+          .listTitleInfo { display: flex; align-items: center; gap: 10px; }
+          .listMainTitle { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
+          .listCounter { font-size: 11px; font-weight: 800; color: var(--accent); padding-top: 2px; }
+          
+          .toolbarInTitle{ display: flex; align-items: center; gap: 14px; }
+          .iconBtn{ background: none; border: none; cursor: pointer; color: rgba(0,0,0,0.2); transition: all 0.3s ease; }
+          .iconBtn.active{ color: var(--accent); transform: scale(1.1); }
 
-        .scroll{ max-height: calc(100vh - 380px); min-height: 480px; overflow-y:auto; }
-        .scroll::-webkit-scrollbar { width:4px; }
-        .scroll::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.05); border-radius:10px; }
-        
-        .item{ display:grid; grid-template-columns: 36px 110px 1fr; gap:18px; padding:16px 28px; cursor:pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); align-items:center; }
-        .item:hover { background: rgba(255,255,255,0.2); transform: translateX(8px); }
-        /* ✅ 锁定：正在播放的歌不加紫色背景 */
-        .item.active{ position:relative; background: transparent; }
-        .item.active::before{ content:""; position:absolute; left:0; height:30%; width:5px; background:var(--accent); border-radius:0 10px 10px 0; }
-        
-        .trackIdx { font-size: 12px; font-weight: 800; color: rgba(0,0,0,0.15); font-variant-numeric: tabular-nums; transition: color 0.3s ease; }
-        .item:hover .trackIdx { color: var(--accent); opacity: 0.8; }
-        .item.active .trackIdx { color: var(--accent); opacity: 1; }
-        
-        .itemThumb{ width:110px; min-width:110px; height:62px; border-radius:14px; overflow:hidden; border: 1px solid rgba(0,0,0,0.03); background:#000; flex-shrink: 0; }
-        .itemThumb img{ width: 100%; height: 100%; object-fit: cover; }
+          .searchInside{ 
+            display:flex; align-items:center; gap:12px; padding:10px 18px; 
+            border-radius:16px; background:rgba(255,255,255,0.4); border: 1px solid var(--line);
+          }
+          .searchInside input { border: none; outline: none; background: transparent; width: 100%; font-size: 14px; font-weight: 600; color: #111; }
 
-        .itemTitle { font-size: 14px; font-weight: 800; line-height: 1.45; color: #1f2937; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; letter-spacing: -0.2px; }
-        .itemSub { font-size: 11px; color: rgba(0,0,0,0.3); font-weight: 700; margin-top: 4px; text-transform: uppercase; }
-        
-        @media (max-width:1024px){ 
-          .page { padding: 12px 8px 30px; }
-          .mainGrid { grid-template-columns: 1fr; margin-bottom: 12px; } 
-          .glass { border-radius: 24px; }
-          .nowPlayingArea { padding: 16px 20px; }
-          .item { grid-template-columns: 30px 90px 1fr; padding: 12px 16px; gap: 14px; } 
-          .itemThumb { width: 90px; min-width: 90px; height: 50px; }
-        }
+          .scroll{ max-height: calc(100vh - 380px); min-height: 480px; overflow-y:auto; }
+          .scroll::-webkit-scrollbar { width:4px; }
+          .scroll::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.05); border-radius:10px; }
+          
+          .item{ display:grid; grid-template-columns: 36px 110px 1fr; gap:18px; padding:16px 28px; cursor:pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); align-items:center; }
+          .item:hover { background: rgba(255,255,255,0.2); transform: translateX(8px); }
+          /* ✅ 锁定：正在播放的歌不加紫色背景 */
+          .item.active{ position:relative; background: transparent; }
+          .item.active::before{ content:""; position:absolute; left:0; height:30%; width:5px; background:var(--accent); border-radius:0 10px 10px 0; }
+          
+          .trackIdx { font-size: 12px; font-weight: 800; color: rgba(0,0,0,0.15); font-variant-numeric: tabular-nums; transition: color 0.3s ease; }
+          .item:hover .trackIdx { color: var(--accent); opacity: 0.8; }
+          .item.active .trackIdx { color: var(--accent); opacity: 1; }
+          
+          .itemThumb{ width:110px; min-width:110px; height:62px; border-radius:14px; overflow:hidden; border: 1px solid rgba(0,0,0,0.03); background:#000; flex-shrink: 0; }
+          .itemThumb img{ width: 100%; height: 100%; object-fit: cover; }
 
-        .footer{ margin-top:20px; text-align:center; color:rgba(0,0,0,0.2); font-size:11px; font-weight: 700; letter-spacing: 1px; }
-      `}</style>
+          .itemTitle { font-size: 14px; font-weight: 800; line-height: 1.45; color: #1f2937; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; letter-spacing: -0.2px; }
+          .itemSub { font-size: 11px; color: rgba(0,0,0,0.3); font-weight: 700; margin-top: 4px; text-transform: uppercase; }
+          
+          @media (max-width:1024px){ 
+            .page { padding: 12px 8px 30px; }
+            .mainGrid { grid-template-columns: 1fr; margin-bottom: 12px; } 
+            .glass { border-radius: 24px; }
+            .nowPlayingArea { padding: 16px 20px; }
+            .item { grid-template-columns: 30px 90px 1fr; padding: 12px 16px; gap: 14px; } 
+            .itemThumb { width: 90px; min-width: 90px; height: 50px; }
+          }
 
-      <div className="container" onClick={(e) => e.stopPropagation()}>
-        <header className="header glass">
-          <div className="logoWrap">
-            <img src="/logo.png" style={{height:'48px'}} alt="Logo" />
-            <div>
-              <div className="brandTitle">四海颂扬｜音乐事工</div>
-              <div className="sub">FOUR SEAS PRAISE</div>
-            </div>
-          </div>
-        </header>
+          .footer{ margin-top:20px; text-align:center; color:rgba(0,0,0,0.2); font-size:11px; font-weight: 700; letter-spacing: 1px; }
+        `}</style>
 
-        <div className="mainGrid">
-          <section className="glass flex flex-col">
-            <div className="playerBox">
-              <div className="playerInner" ref={playerHostRef} />
-            </div>
-            {now && (
-              <div className="nowPlayingArea">
-                <div className="titleContent">
-                  <div className="nowLabel">正在播放</div>
-                  <h2 className="nowPlayingTitle">{now.title}</h2>
-                </div>
-                
-                <div className="playerControls">
-                  <button className="controlBtn" onClick={(e) => { e.stopPropagation(); handlePlayPrev(); }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
-                  </button>
-                  <button className="controlBtn" onClick={togglePlay}>
-                    {isPlaying ? (
-                      <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                    ) : (
-                      <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                    )}
-                  </button>
-                  <button className="controlBtn" onClick={(e) => { e.stopPropagation(); handlePlayNext(); }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-                  </button>
-                </div>
-              </div>
-            )}
-          </section>
-
-          <aside className="glass flex flex-col">
-            <div className="listHeaderArea">
-              <div className="listTitleRow">
-                <div className="listTitleInfo">
-                  <div className="listMainTitle">播放列表</div>
-                  <div className="listCounter">{(active + 1)}/{items.length}</div>
-                </div>
-                
-                <div className="toolbarInTitle">
-                  <button className={`iconBtn ${playMode === 'SHUFFLE' ? 'active' : ''}`} onClick={() => setPlayMode('SHUFFLE')}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
-                  </button>
-                  <button className={`iconBtn ${playMode === 'LIST_LOOP' ? 'active' : ''}`} onClick={() => setPlayMode('LIST_LOOP')}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
-                  </button>
-                  <button className={`iconBtn ${playMode === 'SINGLE_LOOP' ? 'active' : ''}`} onClick={() => setPlayMode('SINGLE_LOOP')}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m17 2 4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v2a4 4 0 0 1-4 4H3"></path><path d="M11 10h1v4"></path></svg>
-                  </button>
-                </div>
-              </div>
-              
-              <div className="searchInside">
-                <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="在曲库中搜索歌曲…" />
+        <div className="container" onClick={(e) => e.stopPropagation()}>
+          <header className="header glass">
+            <div className="logoWrap">
+              <img src="/logo.png" style={{height:'48px'}} alt="Logo" />
+              <div>
+                <div className="brandTitle">四海颂扬｜音乐事工</div>
+                <div className="sub">FOUR SEAS PRAISE</div>
               </div>
             </div>
+          </header>
 
-            <div className="scroll">
-              {filtered.map(({ it, idx }, i) => {
-                const isActive = idx === active;
-                return (
-                  <div key={it.videoId} className={"item" + (isActive ? " active" : "")} onClick={() => setActive(idx)}>
-                    <div className="trackIdx">{isActive ? "▶" : (i + 1).toString().padStart(2, "0")}</div>
-                    <div className="itemThumb">
-                      <img src={it.thumb} alt={it.title} />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="itemTitle">{it.title}</div>
-                      <div className="itemSub">{it.channel}</div>
-                    </div>
+          <div className="mainGrid">
+            <section className="glass flex flex-col">
+              <div className="playerBox">
+                <div className="playerInner" ref={playerHostRef} />
+              </div>
+              {now && (
+                <div className="nowPlayingArea">
+                  <div className="titleContent">
+                    <div className="nowLabel">正在播放</div>
+                    <h2 className="nowPlayingTitle">{now.title}</h2>
                   </div>
-                );
-              })}
-            </div>
-          </aside>
-        </div>
+                  
+                  <div className="playerControls">
+                    <button className="controlBtn" onClick={(e) => { e.stopPropagation(); handlePlayPrev(); }}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+                    </button>
+                    <button className="controlBtn" onClick={togglePlay}>
+                      {isPlaying ? (
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                      ) : (
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                      )}
+                    </button>
+                    <button className="controlBtn" onClick={(e) => { e.stopPropagation(); handlePlayNext(); }}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </section>
 
-        <footer className="footer">
-          <div>© {new Date().getFullYear()} 四海颂扬 FOUR SEAS PRAISE MUSIC MINISTRIES</div>
-          <div className="mt-2 opacity-50 uppercase tracking-widest">{meta}</div>
-        </footer>
-      </div>
-    </main>
+            <aside className="glass flex flex-col">
+              <div className="listHeaderArea">
+                <div className="listTitleRow">
+                  <div className="listTitleInfo">
+                    <div className="listMainTitle">播放列表</div>
+                    <div className="listCounter">{(active + 1)}/{items.length}</div>
+                  </div>
+                  
+                  <div className="toolbarInTitle">
+                    <button className={`iconBtn ${playMode === 'SHUFFLE' ? 'active' : ''}`} onClick={() => setPlayMode('SHUFFLE')}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                    </button>
+                    <button className={`iconBtn ${playMode === 'LIST_LOOP' ? 'active' : ''}`} onClick={() => setPlayMode('LIST_LOOP')}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+                    </button>
+                    <button className={`iconBtn ${playMode === 'SINGLE_LOOP' ? 'active' : ''}`} onClick={() => setPlayMode('SINGLE_LOOP')}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m17 2 4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><path d="m7 22-4-4 4-4"></path><path d="M21 13v2a4 4 0 0 1-4 4H3"></path><path d="M11 10h1v4"></path></svg>
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="searchInside">
+                  <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="在曲库中搜索歌曲…" />
+                </div>
+              </div>
+
+              <div className="scroll">
+                {filtered.map(({ it, idx }, i) => {
+                  const isActive = idx === active;
+                  return (
+                    <div key={it.videoId} className={"item" + (isActive ? " active" : "")} onClick={() => setActive(idx)}>
+                      <div className="trackIdx">{isActive ? "▶" : (i + 1).toString().padStart(2, "0")}</div>
+                      <div className="itemThumb">
+                        <img src={it.thumb} alt={it.title} />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="itemTitle">{it.title}</div>
+                        <div className="itemSub">{it.channel}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </aside>
+          </div>
+
+          <footer className="footer">
+            <div>© {new Date().getFullYear()} 四海颂扬 FOUR SEAS PRAISE MUSIC MINISTRIES</div>
+            <div className="mt-2 opacity-50 uppercase tracking-widest">{meta}</div>
+          </footer>
+        </div>
+      </main>
+    </>
   );
 }
